@@ -1,0 +1,3 @@
+#!/bin/sh
+git archive --format zip -o ${PWD##*/}_$(git log --pretty=format:"%h" -1)_$(git log --date=short --pretty=format:"%ad" -1).zip HEAD
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+    echo Usage: tostripfile debugdir debugfile
+    exit
+fi
+tostripfile=$1
+debugdir=$2
+debugfile=$3
+if [ ! -d "$debugdir" ]; then
+    echo creating directory: $debugdir
+    mkdir -p $debugdir
+fi
+objcopy --only-keep-debug $tostripfile $debugdir/$debugfile
+strip --strip-debug --strip-unneeded $tostripfile
+objcopy --add-gnu-debuglink=$debugdir/$debugfile $tostripfile

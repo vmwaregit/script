@@ -1,0 +1,32 @@
+set arrowstyle=highlight
+set autosourcereload
+set tabstop=4
+
+hi PreProc           cterm=normal ctermfg=Magenta
+hi SelectedLineNr    cterm=bold   ctermfg=White       ctermbg=DarkCyan
+hi LineHighlight     cterm=normal ctermfg=Black        ctermbg=White
+hi IncSearch         cterm=normal ctermfg=white       ctermbg=Yellow
+hi Breakpoint        cterm=bold   ctermfg=White       ctermbg=Blue
+hi DisableBreakpoint cterm=normal ctermfg=DarkGray    ctermbg=Blue
+hi StatusLine        cterm=normal ctermfg=DarkGray    ctermbg=White
+
+map <S-B> iinfo<Space>breakpoints<CR><ESC>
+map <S-L> iinfo<Space>local<CR><ESC>
+map <S-F> iinfo<Space>frame<CR><ESC>
+map <S-S> iinfo<Space>stack<CR><ESC>
+map <S-H> iinfo<Space>share<CR><ESC>
+map <S-T> iinfo<Space>thread<CR><ESC>
+map <S-D> iinfo<Space>dispaly<CR><ESC>
+map <S-W> iwhere<CR><ESC>
+map <S-A> ishow<Space>args<CR><ESC>
+map <S-Q> iquit<CR><ESC>
+
+map u :up<CR>
+map d :down<CR>
+map r :run<CR>
+map c :continue<CR>
+map w :until
+map n :next
+map s :step
+map f :finish
+

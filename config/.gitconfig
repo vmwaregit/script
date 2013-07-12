@@ -1,0 +1,39 @@
+[user]
+
+[alias]
+    co   = checkout
+    st   = status
+    br   = branch
+    df   = diff 
+    dfs  = diff --stat
+    dfc  = diff --cached
+    dfcs = diff --cached --stat 
+    dfh  = diff HEAD
+    dfhs = diff HEAD --stat 
+    lg   = log --graph --pretty=format:'%Cred%h%Creset -%s %Cgreen(%cr) %C(bold blue)<%an>%Creset %C(yellow)%d%Creset' --abbrev-commit --date=relative -n10
+    lga  = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
+    hash = log --pretty=format:"%h" -1
+
+    #tp   = push origin --tags
+    #td   = push origin :refs/tags/"you tags"
+
+    cim = commit -m
+    ciam = commit -a -m
+
+#    rc  = commit --amend -C HEAD
+    rs = reset --soft
+    rh = reset --hard
+    rc = checkout -- 
+
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    ui = auto
+
+[branch]
+    autosetuprebase = always
+
+[core]
+    editor = vim
+	whitespace = cr-at-eol

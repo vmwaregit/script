@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ $# -ne 1 -a $# -ne 2 ]; then
+    echo "$0 <pid> [update interval]"
+    echo
+    echo "    update interval: default 0.1s"
+    echo
+    exit 1
+fi
+
+# Get general info
+pid=$1
+ppid=$(grep PPid /proc/$pid/status | awk '{print $2}')
+prog_name=$(grep Name /proc/$pid/status | awk '{print $2}')
+
+# Get update interval
+sleep_time=0.5
+if [ $# -eq 2 ]; then
+    sleep_time=$2
+fi
+
+# Monitor
+cd /proc/${pid}/task/
+while [ 1 ]
+do
+    threads=`ls`
+    ntherad=$(grep Threads /proc/$pid/status | awk '{print $2}')
+
+    clear
+    echo "$pid (name: $prog_name, ppid: $ppid, nthread: $ntherad)"
+    echo "------------------------"
+    
+    #output=""
+    #for thread_pid in ${threads} ; do
+    #    thread_name=`cat ${thread_pid}/comm`
+    #    thread_state=`cat ${thread_pid}/status | grep State | sed 's/[\./]/ /g' | awk '{printf "%s %s", $2, $3}'`
+    #    output="${output}(${thread_pid}) ${thread_name} > ${thread_state}\n"
+    #done
+    #echo -e ${output}
+    find . -name 'status' | xargs grep -e "Name" -e "State" | \
+        sed 's/.*Name:\t//g' |sed 'N;s/\n/ /' | sed 's/[\./]/ /g' | \
+        awk '{printf "%s(%s)\t\t\t %s %s\n", $2, $1, $4, $5}'
+    sleep ${sleep_time}
+done

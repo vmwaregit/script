@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ ! -z "$1" ]; then
+  mkdir $1 ./$1/{src,include,lib,debug,release}
+  echo -e "Create $1 project  successed....."
+
+ else
+  echo -e "ERROR ! you  must specific project name.."
+fi
+

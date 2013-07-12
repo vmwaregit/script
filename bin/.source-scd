@@ -1,0 +1,145 @@
+#!/bin/bash
+
+TMP_FILE_PATH=${HOME}
+TMP_CD_NAME=".scd_list"
+TMP_BOOKMARK_NAME=".scd_bookmark"
+TMP_CD_PATH="${HOME}/.script/bin"
+SCD_LIST_FILE="${TMP_FILE_PATH}/${TMP_CD_NAME}"
+SCD_BOOKMARK_FILE="${TMP_FILE_PATH}/${TMP_BOOKMARK_NAME}"
+PATH_LIST_SIZE=5
+
+if [ `uname` == "Darwin" ]; then
+    COLOR_START="\033"
+else
+    COLOR_START="\e"
+fi
+PATH_TITLE_COLOR="1;31m"
+PATH_NUMBER_COLOR="1;33m"
+PATH_COLOR="0;34m"
+
+BuildPathFile() {
+    cat ${SCD_LIST_FILE} | tail -n ${PATH_LIST_SIZE}  > ${SCD_LIST_FILE}.tmp
+    mv  ${SCD_LIST_FILE}.tmp ${SCD_LIST_FILE}
+}
+
+ShowCacheBookmarkPATH() {
+    PATH_LIST=`tac ${SCD_LIST_FILE}` 
+    unset IFS 
+    BuildPathFile
+
+    BOOKMARK_LIST=`cat ${SCD_BOOKMARK_FILE}`
+    echo  -e "${COLOR_START}[${PATH_TITLE_COLOR} BookMark Path List ...${COLOR_START}[00m"
+    i=0
+    IFS=$'\n' 
+    for BOOKMARK_PATH in ${BOOKMARK_LIST}; do
+        echo -e "    ${COLOR_START}[${PATH_NUMBER_COLOR}${i}. ${COLOR_START}[${PATH_COLOR}${BOOKMARK_PATH}${COLOR_START}[00m"
+        i=$(($i+1))
+    done
+    unset IFS 
+}
+
+ShowCacheLastPath()
+{
+    PATH_LIST=`tac ${SCD_LIST_FILE}` 
+    echo -e "\e[${PATH_TITLE_COLOR} Cache Path List ...\e[00m"
+    i=0
+    IFS=$'\n' 
+    for CACHECDPATH in ${PATH_LIST}; do
+        echo -e "    \e[${PATH_NUMBER_COLOR}${i}\e[00m. \e[${PATH_COLOR}${CACHECDPATH}\e[00m"
+        i=$(($i+1))
+        if [ ${i} -eq ${PATH_LIST_SIZE} ]; then
+            break
+        fi
+    done
+}
+
+SelectCacheCDPath() {
+    PATH_LIST=`tac ${SCD_LIST_FILE}` 
+    i=0
+    IFS=$'\n' 
+    for CACHECDPATH in ${PATH_LIST}; do
+        if [ ${i} -eq ${1} ]; then
+            cd ${CACHECDPATH} 
+        fi
+        i=$(($i+1))
+    done
+    unset IFS 
+}
+
+SelectBookMarkPath() {
+    BOOKMARK_LIST=`cat ${SCD_BOOKMARK_FILE}`
+    i=0
+    IFS=$'\n' 
+    for BOOKMARK_PATH in ${BOOKMARK_LIST}; do
+        if [ ${i} -eq ${1} ]; then
+            cd ${BOOKMARK_PATH} 
+        fi
+        i=$(($i+1))
+    done
+    unset IFS 
+}
+
+ChangeCacheCDListSize() {
+    sed "s/SIZE=[0-9]\{1,2\}/SIZE=${1}/" "${TMP_CD_PATH}/source-scd" >> "${TMP_CD_PATH}/source-scd.tmp"
+    mv  "${TMP_CD_PATH}/source-scd.tmp" "${TMP_CD_PATH}/source-scd"
+}
+
+ReturnParentPath() {
+    TMPSTR=""
+    for (( i=0; i < ${1}; i++)); do
+        TMPSTR="${TMPSTR}../"
+    done
+    cd ${TMPSTR}
+}
+
+AddPWDtoCacheList() {
+    pwd >> ${SCD_LIST_FILE}
+}
+
+AddPWDtoBookMarkList() {
+    pwd >> ${SCD_BOOKMARK_FILE}
+}
+
+if [ $# -eq 0 ]; then
+    #ShowCacheLastPATH
+    ShowCacheBookmarkPATH
+elif [ $# -eq "1" ]; then 
+    if [ $1 -eq $1 2> /dev/null ]; then
+        SelectCacheCDPath $1 
+    else
+        case $1 in
+            l)
+                ShowCacheLastPATH
+                ShowCacheBookmarkPATH
+                ;;
+            b)
+                AddPWDtoBookMarkList
+                ;;
+            *)
+                cd ${1} 
+                AddPWDtoCacheList
+                ;;
+        esac
+    fi
+elif [ $# -eq  "2" ]; then
+    case $1 in
+        s)
+            if [ $2 -eq $2 2> /dev/null ]; then
+                ChangeCacheCDListSize $2
+            fi
+            ;;
+        b)
+            if [ $2 -eq $2 2> /dev/null ]; then
+                SelectBookMarkPath $2
+            fi
+            ;;
+        ..)
+            if [ $2 -eq $2 2> /dev/null ]; then
+                ReturnParentPath $2
+            fi
+            ;;
+        *)
+            exit 0
+            ;;
+    esac
+fi
