@@ -36,3 +36,4 @@ CreateBackUpFile ".gdbinit_stl"
 ln -s .script/config/.gdbinit_stl ~/.gdbinit_stl
 
 touch ~/.scd_bookmark
+touch ~/.scd_list
